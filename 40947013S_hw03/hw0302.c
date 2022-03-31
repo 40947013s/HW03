@@ -3,7 +3,7 @@
 int main(void) 
 {
     FILE *pFile = NULL;
-    char name[127];
+    char name[255];
     double speed;
     printf("Open a srt file: ");
     scanf("%s", name);
