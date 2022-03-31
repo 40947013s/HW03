@@ -77,14 +77,12 @@ int main()
             for(int l = 0; l < 3; l++)
             {
                 if((dx*dx + dy*dy) <= (r*r))
-                    n_color[k+l] = 255;
-                else    
                     n_color[k+l] = color[k+l];
-            }
-            
+                else    
+                    n_color[k+l] = 255;
+            }            
         }
-        fwrite(n_color, 1, times, pFile2);
-        
+        fwrite(n_color, 1, times, pFile2);       
     }
     fclose(pFile);
     fclose(pFile2);
