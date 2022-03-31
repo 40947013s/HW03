@@ -2,9 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
-#include <math.h>
-
-#define PI 3.1415926
 
 typedef struct _sBmpheader
 {
@@ -42,6 +39,12 @@ int main()
         printf("File could not be opened!\n");
         return 0;
     }
+    fread(&header, sizeof(header), 1, pFile);
+    if(header.bm[0]!= 'B' || header.bm[1]!= 'M' )
+    {
+        printf("This is not bmp file!\n");
+        return 0;
+    }
 
     printf("Please enter the output image name: ");
     fgets(output, 255, stdin);
@@ -61,7 +64,6 @@ int main()
         return 0;
     }
     
-    fread(&header, sizeof(header), 1, pFile);
     fwrite(&header, sizeof(header), 1, pFile2);
     
     int times = header.width * 3 + header.width % 4;
