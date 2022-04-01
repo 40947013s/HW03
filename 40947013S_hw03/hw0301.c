@@ -12,6 +12,7 @@ int main()
         printf("File could not be opened!\nExit.\n");
         return 0;
     }
+    search_time(pFile, key);
     search(pFile, key);
 	fclose(pFile);
     return 0;

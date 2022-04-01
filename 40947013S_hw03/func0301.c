@@ -2,9 +2,9 @@
 
 int count_lines(FILE * pFile)
 {
-    char line[1000];
+    char line[2000];
     int Line = 0;
-    while(fgets(line,1000,pFile) != NULL)
+    while(fgets(line,2000,pFile) != NULL)
         Line++;
     rewind(pFile);
     return Line;
@@ -18,18 +18,39 @@ char *lower(char *str)
     return ret;
 }
 
-void search(FILE *pFile, char *Key)
+void search_time(FILE *pFile, char *key)
+{
+    int count = count_lines(pFile), Line = 0, Counter = 1;
+	char line[2000];
+    while(fgets(line,2000,pFile) != NULL)
+    {        
+        int text_s = 0, td_s = 0, bi_s = 0, bn_s = 0;
+        char *text = strstr(line, "text\":\"");
+        text += 7; text_s = strlen(line) - strlen(text);
+        text = strstr(text, "translation_id\":\"");
+        text += 17; td_s = strlen(line) - strlen(text);
+        text = strstr(text, "book_id\":\"");
+        text += 10; bi_s = strlen(line) - strlen(text);
+        text = strstr(text, "book_name\":\"");
+        text += 12; bn_s = strlen(line) - strlen(text);
+
+        text = malloc(td_s-20-text_s+1); int counter = 0;
+        for(int i = text_s; i < td_s-20; i++)
+            text[counter++] = line[i];
+        text[counter] = 0;
+        if(strstr(lower(text), lower(key)) == NULL) 
+            continue;             
+        Counter++;
+    }
+    printf("Find %d times\n", Counter-1);
+    rewind(pFile);
+}
+
+void search(FILE *pFile, char *key)
 {
     int count = count_lines(pFile), Line = 0, Counter = 1;
 	char line[2000];
     Base node[count]; 
-    
-    char *key = malloc(strlen(Key)+1);
-    for(int i = 0; i < strlen(Key); i++)
-        key[i] = Key[i];
-    key[strlen(Key)] = ' ';
-    
-    for(int i = 0; i < 5; i++)
     while(fgets(line,2000,pFile) != NULL)
     {        
         char *copy_line = malloc(strlen(line)+1);
@@ -62,7 +83,7 @@ void search(FILE *pFile, char *Key)
         text[counter] = 0;
         if(strstr(lower(text), lower(key)) == NULL) 
         {
-            Line++; break;            
+            Line++; continue;            
         }        
         node[Line].text = text;
         
@@ -71,7 +92,7 @@ void search(FILE *pFile, char *Key)
             text[counter++] = line[i];
         text[counter] = 0;
         node[Line].book_id = text;
-        printf("%d %d:%d %s\n", Counter, node[Line].chapter, node[Line].verse, node[Line].text);
+        printf("%d %s %d:%d %s\n", Counter, node[Line].book_id, node[Line].chapter, node[Line].verse, node[Line].text);
         Counter++;
         Line++;
     }
