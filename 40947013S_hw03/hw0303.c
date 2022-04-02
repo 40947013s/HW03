@@ -57,7 +57,7 @@ int main()
     printf("Please enter the radius: ");
     scanf("%lf", &r);
 
-    pFile2 = fopen(output, "w");
+    pFile2 = fopen(output, "wb");
     if( pFile2 == NULL )
     {
         printf("File could not be opened!\n");

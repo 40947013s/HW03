@@ -22,26 +22,48 @@ typedef struct _sBmpheader
     uint32_t important;
 }__attribute__((__packed__)) Bmpheader;
 
+void change(Bmpheader *header, FILE *fp)
+{
+	uint32_t info_size = (((uint32_t)header->width*16+31) >> 5) << 2;
+	uint32_t head_size = sizeof(Bmpheader) + 12;
+	uint8_t mask[12] = {0, 248, 0, 0, 224, 7, 0, 0, 31, 0, 0, 0}; 
+
+	header->bpp = 16;
+	header->compression = 3 ; 
+	header->bitmap_size = header->height * info_size;
+	header->size = (head_size + header->bitmap_size);
+	header->offset = head_size;
+
+	fwrite(header, 1, sizeof(Bmpheader), fp);
+	fwrite(mask, 1, sizeof(mask), fp);
+}
+
 int main()
 {
-    FILE *pFile , *pFile2;
-    char input[255] , output[255];
+    FILE *pFile, *pFile2;
+    char input[255], output[255];
     Bmpheader header;
+    
     printf("Please enter the input image name: ");
-    fgets(input , 255, stdin);
+    fgets(input, 255, stdin);
     if(input[strlen(input) - 1] == '\n')
         input[strlen(input) - 1] = 0;
     
-    pFile = fopen(input,"r");
-    if(pFile == NULL)
+    if((pFile = fopen(input, "r")) == NULL)
     {
         printf("File could not be opened!\n");
         return 0;
     }
-    fread(&header, sizeof(header), 1, pFile);
+    
+    fread(&header, sizeof(uint8_t), sizeof(header), pFile);
     if(header.bm[0]!= 'B' || header.bm[1]!= 'M')
     {
         printf("This is not bmp file!\n");
+        return 0;
+    }
+    if(header.bpp != 24)
+    {
+        printf("This is not a 24-bit bmp file!\n");
         return 0;
     }
 
@@ -50,38 +72,31 @@ int main()
     if(output[strlen(output) - 1] == '\n')
         output[strlen(output) - 1] = 0;
 
-    pFile2 = fopen(output, "w");
-    if( pFile2 == NULL )
+    if((pFile2 = fopen(output, "wb")) == NULL)
     {
         printf("File could not be opened!\n");
         return 0;
     }
-    header.bpp = 16;
-    fwrite(&header, sizeof(header), 1, pFile2);
     
-    int times = header.width * 3 + header.width % 4;
-    int n_times = header.width;
-    uint8_t a, b, c; 
-    uint8_t *color = (uint8_t*)malloc(sizeof(uint8_t) * times);    
-    uint16_t *n_color = (uint16_t*)malloc(sizeof(uint16_t) * n_times); 
+    int in_size = ((header.width*header.bpp+31) >> 5) << 2;
+    int out_size = ((header.width*16+31) >> 5) << 2;
+    uint8_t *in_color = (uint8_t *)malloc(sizeof(uint8_t) *in_size);
+    uint8_t *out_color = (uint8_t *)malloc(sizeof(uint8_t) *out_size*header.height);
+    int count = 0;
+    
+    change(&header, pFile2);   
     for(int i = 0; i < header.height; i++)
     {
-        fread(color, 1, times, pFile);        
-        for(int k = 0; k < times; k+=3)
+        fread(in_color, 1, in_size, pFile);        
+        for(int j = 0; j < header.width; j++)
         {
-            for(int l = 0; l < 3; l++)
-            {
-                if(l == 0)
-                    a = (color[k+l] >> 3) << 11;            
-                else if(l == 1)
-                    b = (color[k+l] >> 2) << 5;
-                else  c = color[k+l] >> 3;
-            } 
-            n_color[k/3] = (a+b+c);
-            //printf("%d\n", k);
+            uint16_t sum = ((in_color[3*j+2] >> 3) << 11)+((in_color[3*j+1] >> 2) << 5)+(in_color[3*j] >> 3);         
+            out_color[count++] = sum & 0xFF;
+            out_color[count++] = sum >> 8;
         }
-        fwrite(n_color, 1, n_times, pFile2);       
     }
+    
+    fwrite(out_color, out_size, header.height, pFile2);    
     fclose(pFile);
     fclose(pFile2);
     return 0;
