@@ -26,7 +26,6 @@ int main()
 {
     FILE *pFile , *pFile2;
     char input[255] , output[255];
-    double x, y, r;
     Bmpheader header;
     printf("Please enter the input image name: ");
     fgets(input , 255, stdin);
@@ -51,40 +50,37 @@ int main()
     if(output[strlen(output) - 1] == '\n')
         output[strlen(output) - 1] = 0;
 
-    printf("Please enter the center: ");
-    scanf("%lf %lf", &x, &y);
-
-    printf("Please enter the radius: ");
-    scanf("%lf", &r);
-
     pFile2 = fopen(output, "w");
     if( pFile2 == NULL )
     {
         printf("File could not be opened!\n");
         return 0;
     }
-    
+    header.bpp = 16;
     fwrite(&header, sizeof(header), 1, pFile2);
     
     int times = header.width * 3 + header.width % 4;
+    int n_times = header.width;
+    uint8_t a, b, c; 
     uint8_t *color = (uint8_t*)malloc(sizeof(uint8_t) * times);    
-    uint8_t *n_color = (uint8_t*)malloc(sizeof(uint8_t) * times); 
+    uint16_t *n_color = (uint16_t*)malloc(sizeof(uint16_t) * n_times); 
     for(int i = 0; i < header.height; i++)
     {
         fread(color, 1, times, pFile);        
         for(int k = 0; k < times; k+=3)
         {
-            double dx = k/3-x;
-            double dy = (header.height-i)-y;
             for(int l = 0; l < 3; l++)
             {
-                if((dx*dx + dy*dy) <= (r*r))
-                    n_color[k+l] = color[k+l];
-                else    
-                    n_color[k+l] = 255;
-            }            
+                if(l == 0)
+                    a = (color[k+l] >> 3) << 11;            
+                else if(l == 1)
+                    b = (color[k+l] >> 2) << 5;
+                else  c = color[k+l] >> 3;
+            } 
+            n_color[k/3] = (a+b+c);
+            //printf("%d\n", k);
         }
-        fwrite(n_color, 1, times, pFile2);       
+        fwrite(n_color, 1, n_times, pFile2);       
     }
     fclose(pFile);
     fclose(pFile2);
