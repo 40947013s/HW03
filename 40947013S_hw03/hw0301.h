@@ -16,7 +16,6 @@ typedef struct base
 }Base;
 
 int count_lines(FILE * pFile);
-char *lower(char *str);
 void search(FILE *pFile, char *Key);
 void search_time(FILE *pFile, char *key);
 

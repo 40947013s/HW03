@@ -55,7 +55,7 @@ int main()
         return 0;
     }
     
-    fread(&header, sizeof(uint8_t), sizeof(header), pFile);
+    fread(&header, 1, sizeof(header), pFile);
     if(header.bm[0]!= 'B' || header.bm[1]!= 'M')
     {
         printf("This is not bmp file!\n");
@@ -96,7 +96,8 @@ int main()
         }
     }
     
-    fwrite(out_color, out_size, header.height, pFile2);    
+    fwrite(out_color, out_size, header.height, pFile2); 
+    printf("Done.\n");
     fclose(pFile);
     fclose(pFile2);
     return 0;

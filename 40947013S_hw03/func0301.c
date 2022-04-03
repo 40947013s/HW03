@@ -10,14 +10,6 @@ int count_lines(FILE * pFile)
     return Line;
 }
 
-char *lower(char *str)
-{
-    char *ret = malloc(strlen(str));
-    for(int i = 0; i < strlen(str); i++)
-        ret[i] = tolower(str[i]);
-    return ret;
-}
-
 void search_time(FILE *pFile, char *key)
 {
     int count = count_lines(pFile), Line = 0, Counter = 1;
@@ -38,9 +30,8 @@ void search_time(FILE *pFile, char *key)
         for(int i = text_s; i < td_s-20; i++)
             text[counter++] = line[i];
         text[counter] = 0;
-        if(strstr(lower(text), lower(key)) == NULL) 
-            continue;             
-        Counter++;
+        if(strcasestr(text, key))         
+            Counter++;
     }
     printf("Find %d times\n", Counter-1);
     rewind(pFile);
@@ -81,12 +72,11 @@ void search(FILE *pFile, char *key)
         for(int i = text_s; i < td_s-20; i++)
             text[counter++] = line[i];
         text[counter] = 0;
-        if(strstr(lower(text), lower(key)) == NULL) 
+        if(strcasestr(text, key) == NULL) 
         {
             Line++; continue;            
         }        
         node[Line].text = text;
-        
         text = malloc(bn_s-15-bi_s+1); counter = 0;
         for(int i = bi_s; i < bn_s-15; i++)
             text[counter++] = line[i];

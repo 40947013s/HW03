@@ -5,7 +5,8 @@ int main()
     FILE *pFile = NULL;
     char key[1000];
     printf("Please enter the search target: ");
-    scanf("%s", key);
+    fgets(key, 1000, stdin);
+    key[strlen(key)-1] = 0;
     
     if((pFile = fopen("bible.txt", "r")) == NULL)
     {
