@@ -38,7 +38,7 @@ void counter(FILE *step, int *m, int *n, int *count)
 bool check(int a, int b, int m, int n)
 {  
     int x = abs((a-1)/m-(b-1)/m), y = abs((a-1)%m-(b-1)%m);
-    printf("%d %d %d %d\n", a, b, x, y);
+    //printf("%d %d %d %d\n", a, b, x, y);
     if((x != 0 && x != 1) || (y != 0 && y != 1) || (x^y) == 0) return false;
     return true;
 }
