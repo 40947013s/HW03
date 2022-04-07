@@ -95,7 +95,7 @@ void puzzle(FILE *step, FILE *pFile)
             used[j] = false;        
     }
     
-    FILE *pFile2 = fopen("1.bmp", "w");
+    FILE *pFile2 = fopen("0.bmp", "w");
     fread(&header, 1, sizeof(Bmpheader), pFile);
     fwrite(&header, 1, sizeof(Bmpheader), pFile2);
     int in_size = ((header.width*header.bpp+31) >> 5) << 2; 
@@ -123,8 +123,8 @@ void puzzle(FILE *step, FILE *pFile)
     for(int l = 2; l < count+1; l++)
     {
         char old_name[255], new_name[255];
-        sprintf(old_name, "%d.bmp", l-1);
-        sprintf(new_name, "%d.bmp", l);
+        sprintf(old_name, "%d.bmp", l-2);
+        sprintf(new_name, "%d.bmp", l-1);
         if((pFile = fopen(old_name, "r")) == NULL) wrong_file;
         if((pFile2 = fopen(new_name, "w")) == NULL) wrong_file;
         fread(&header, 1, sizeof(Bmpheader), pFile);
