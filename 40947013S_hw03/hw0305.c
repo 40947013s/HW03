@@ -63,6 +63,8 @@ void puzzle(FILE *step, FILE *pFile)
     for(int i = 0; i < n*m; i++)
     {
         fscanf(step, "%d", &cube[1][i]);
+        if(cube[1][i] > n*m)
+            exit_program;  
         if(used[cube[1][i]] == true)
             exit_program;         
         used[cube[1][i]] = true;
@@ -134,6 +136,7 @@ void puzzle(FILE *step, FILE *pFile)
         int count_space = 0, white;
         pivot = cube[l][change[l][0]-1] == 0 ? change[l][1] : change[l][0];
         white = cube[l][change[l][0]-1] == 0 ? change[l][0] : change[l][1];
+        
         for(int i = 0; i < header.height; i++)
         {
             if(i % h == 0 || (i-1) % h == 0 || (i+1) % h == 0) continue;

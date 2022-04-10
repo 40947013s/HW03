@@ -52,7 +52,7 @@ int main()
         output[strlen(output) - 1] = 0;
 
     printf("Please enter the center: ");
-    scanf("%lf %lf", &x, &y);
+    fscanf(stdin, "(%lf, %lf)", &x, &y);
 
     printf("Please enter the radius: ");
     scanf("%lf", &r);
