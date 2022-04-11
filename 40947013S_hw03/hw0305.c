@@ -45,6 +45,7 @@ bool check(int a, int b, int m, int n)
 
 void puzzle(FILE *step, FILE *pFile)
 {
+    bool zero = false;
     int m, n, count, pivot;
     char line[100];
     Bmpheader header;
@@ -63,18 +64,18 @@ void puzzle(FILE *step, FILE *pFile)
     for(int i = 0; i < n*m; i++)
     {
         fscanf(step, "%d", &cube[1][i]);
-        if(cube[1][i] > n*m)
-            exit_program;  
-        if(used[cube[1][i]] == true)
-            exit_program;         
-        used[cube[1][i]] = true;
+        if(cube[1][i] != cube[0][i])
+        {
+            if(zero == true || cube[1][i] != 0) 
+            {
+                exit_program;
+            }
+            else
+            {
+                zero = true, pivot = i+1;
+            }            
+        }
         if(i % n == n-1) fgets(line, 100, step);
-    }
-    if(used[0] == false) exit_program;
-    for(int i = 0; i < n*m+1; i++)
-    {
-        if(used[i] == false) pivot = i;
-        used[i] = false;
     }
     
     for(int i = 2; i < count+1; i++)
